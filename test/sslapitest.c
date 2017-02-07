@@ -64,10 +64,14 @@ static void client_keylog_callback(const SSL *ssl, const char *line) {
         return;
     }
 
+    if (line_length == 0 || line[line_length - 1] != '\n') {
+        printf("Client log line is not terminated with a newline\n");
+        error_writing_log = 1;
+        return;
+    }
+
     strcat(client_log_buffer, line);
     client_log_buffer_index += line_length;
-    client_log_buffer[client_log_buffer_index] = '\n';
-    client_log_buffer_index += 1;
 
     return;
 }
@@ -82,10 +86,14 @@ static void server_keylog_callback(const SSL *ssl, const char *line) {
         return;
     }
 
+    if (line_length == 0 || line[line_length - 1] != '\n') {
+        printf("Server log line is not terminated with a newline\n");
+        error_writing_log = 1;
+        return;
+    }
+
     strcat(server_log_buffer, line);
     server_log_buffer_index += line_length;
-    server_log_buffer[server_log_buffer_index] = '\n';
-    server_log_buffer_index += 1;
 
     return;
 }

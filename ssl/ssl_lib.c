@@ -4389,14 +4389,14 @@ static int nss_keylog_int(const char *prefix,
 
     /*
      * Our output buffer will contain the following strings, rendered with
-     * space characters in between, terminated by a NULL character: first the
-     * prefix, then the first parameter, then the second parameter. The
-     * meaning of each parameter depends on the specific key material being
+     * space characters in between, terminated by a newline and null character:
+     * first the prefix, then the first parameter, then the second parameter.
+     * The meaning of each parameter depends on the specific key material being
      * logged. Note that the first and second parameters are encoded in
      * hexadecimal, so we need a buffer that is twice their lengths.
      */
     prefix_len = strlen(prefix);
-    out_len = prefix_len + (2*parameter_1_len) + (2*parameter_2_len) + 3;
+    out_len = prefix_len + (2*parameter_1_len) + (2*parameter_2_len) + 4;
     if ((out = cursor = OPENSSL_malloc(out_len)) == NULL) {
         SSLerr(SSL_F_NSS_KEYLOG_INT, ERR_R_MALLOC_FAILURE);
         return 0;
@@ -4416,6 +4416,7 @@ static int nss_keylog_int(const char *prefix,
         sprintf(cursor, "%02x", parameter_2[i]);
         cursor += 2;
     }
+    *cursor++ = '\n';
     *cursor = '\0';
 
     ssl->ctx->keylog_callback(ssl, (const char *)out);

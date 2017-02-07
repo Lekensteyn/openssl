@@ -28,8 +28,7 @@ the value of cb, no logging of key material will be done.
 The key logging callback is called with two items: the B<ssl> object associated
 with the connection, and B<line>, a string containing the key material in the
 format used by NSS for its B<SSLKEYLOGFILE> debugging output. To recreate that
-file, the key logging callback should log B<line>, followed by a newline.
-B<line> will always be a NULL-terminated string.
+file, the key logging callback should log B<line> (which ends with a newline).
 
 
 =head1 SEE ALSO

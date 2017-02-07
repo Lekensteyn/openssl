@@ -896,7 +896,7 @@ struct ssl_ctx_st {
 
     /*
      * Callback for logging key material for use with debugging tools like
-     * Wireshark. The callback should log `line` followed by a newline.
+     * Wireshark. The callback should log `line` (which includes a newline).
      */
     SSL_CTX_keylog_cb_func keylog_callback;
 };

@@ -777,15 +777,15 @@ __owur int SSL_extension_supported(unsigned int ext_type);
 # define SSL_MAC_FLAG_WRITE_MAC_STREAM 2
 
 /*
- * A callback for logging out TLS key material. This callback should log out
- * |line| followed by a newline.
+ * A callback for exporting TLS key material in the NSS keylog format.
+ * The callback should store |line| (which is terminated with a newline).
  */
 typedef void (*SSL_CTX_keylog_cb_func)(const SSL *ssl, const char *line);
 
 /*
  * SSL_CTX_set_keylog_callback configures a callback to log key material. This
  * is intended for debugging use with tools like Wireshark. The cb function
- * should log line followed by a newline.
+ * receives the line to be logged.
  */
 void SSL_CTX_set_keylog_callback(SSL_CTX *ctx, SSL_CTX_keylog_cb_func cb);
 
