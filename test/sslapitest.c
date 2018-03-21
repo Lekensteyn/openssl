@@ -55,6 +55,7 @@ struct sslapitest_log_counts {
     unsigned int server_handshake_secret_count;
     unsigned int client_application_secret_count;
     unsigned int server_application_secret_count;
+    unsigned int early_exporter_secret_count;
     unsigned int exporter_secret_count;
 };
 
@@ -142,6 +143,7 @@ static int test_keylog_output(char *buffer, const SSL *ssl,
     unsigned int server_handshake_secret_count = 0;
     unsigned int client_application_secret_count = 0;
     unsigned int server_application_secret_count = 0;
+    unsigned int early_exporter_secret_count = 0;
     unsigned int exporter_secret_count = 0;
 
     for (token = strtok(buffer, " \n"); token != NULL;
@@ -201,6 +203,7 @@ static int test_keylog_output(char *buffer, const SSL *ssl,
                     || strcmp(token, "SERVER_HANDSHAKE_TRAFFIC_SECRET") == 0
                     || strcmp(token, "CLIENT_TRAFFIC_SECRET_0") == 0
                     || strcmp(token, "SERVER_TRAFFIC_SECRET_0") == 0
+                    || strcmp(token, "EARLY_EXPORTER_SECRET") == 0
                     || strcmp(token, "EXPORTER_SECRET") == 0) {
             /*
              * TLSv1.3 secret. Tokens should be: 64 ASCII bytes of hex-encoded
@@ -218,6 +221,8 @@ static int test_keylog_output(char *buffer, const SSL *ssl,
                 client_application_secret_count++;
             else if (strcmp(token, "SERVER_TRAFFIC_SECRET_0") == 0)
                 server_application_secret_count++;
+            else if (strcmp(token, "EARLY_EXPORTER_SECRET") == 0)
+                early_exporter_secret_count++;
             else if (strcmp(token, "EXPORTER_SECRET") == 0)
                 exporter_secret_count++;
 
@@ -263,6 +268,8 @@ static int test_keylog_output(char *buffer, const SSL *ssl,
                                expected->client_application_secret_count)
             || !TEST_size_t_eq(server_application_secret_count,
                                expected->server_application_secret_count)
+            || !TEST_size_t_eq(early_exporter_secret_count,
+                               expected->early_exporter_secret_count)
             || !TEST_size_t_eq(exporter_secret_count,
                                expected->exporter_secret_count))
         return 0;
@@ -446,6 +453,7 @@ static int test_keylog_no_master_key(void)
 
     /* In addition to the previous entries, expect early secrets. */
     expected.client_early_secret_count = 1;
+    expected.early_exporter_secret_count = 1;
     if (!TEST_true(test_keylog_output(client_log_buffer, clientssl,
                                       SSL_get_session(clientssl), &expected))
             || !TEST_true(test_keylog_output(server_log_buffer, serverssl,
